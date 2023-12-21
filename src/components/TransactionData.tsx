@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import TransactionTable from "./TransactionTable"; // Assuming this component exists
+import { format } from "date-fns";
+// import moment from moment;
 
 interface Transaction {
   id: number;
@@ -32,6 +34,8 @@ const TransactionData: React.FC<TransactionTableProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
+  const [tempSDate, setTempSDate] = useState<string>("");
+  const [tempFDate, setTempFDate] = useState<string>("");
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -72,28 +76,44 @@ const TransactionData: React.FC<TransactionTableProps> = ({
     console.log(transactions);
     if (fromDate && toDate) {
       filtered = filtered.filter((transaction) => {
-        const transactionDate = new Date(transaction.date);
-        return transactionDate >= fromDate && transactionDate <= toDate;
+        const transactionDate = transaction.date.toString();
+        console.log(transactionDate);
+        return transactionDate > tempSDate && transactionDate < tempFDate;
       });
       // if (fromDate && toDate) {
       //   filtered = filtered.filter((transaction) => {
       //     const transactionDate = transaction.date;
       //     return transactionDate >= fromDate && transactionDate <= toDate;
       //   });
+      console.log(typeof transactions[0].date);
+      console.log(tempSDate);
+      console.log(tempFDate);
       console.log(filtered);
-      console.log(toDate.getDate());
     }
 
     setFilteredTransactions(filtered);
   };
 
+  const dateFormat = (e: Date) => {
+    const day = e.getDate();
+    const month = e.getMonth() + 1;
+    const year = e.getFullYear();
+
+    const finalDate = day + "/" + month + "/" + year;
+    return finalDate;
+  };
+
   const handleFromDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const date = event.target.value ? new Date(event.target.value) : null;
+    const date = event.target.value ? new Date(event.target.value) : new Date();
+    // const updatedDate = dateFormat(date);
+    setTempSDate(format(date, "dd/MM/yyyy"));
     setFromDate(date);
+    console.log(fromDate);
   };
 
   const handleToDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const date = event.target.value ? new Date(event.target.value) : null;
+    const date = event.target.value ? new Date(event.target.value) : new Date();
+    setTempFDate(format(date, "dd/MM/yyyy"));
     setToDate(date);
   };
 
@@ -122,6 +142,7 @@ const TransactionData: React.FC<TransactionTableProps> = ({
       {/* Transaction table displaying filtered transactions */}
       <TransactionTable
         transactions={filteredTransactions}
+        setTransactions={setTransactions}
         onDelete={(id) => {
           handleDelete(id);
         }}

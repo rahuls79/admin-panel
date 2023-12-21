@@ -1,52 +1,30 @@
-import React, { useState } from "react";
+import React from "react";
 
-interface FilterBarProps {
-  onFilterChange: (filters: FilterOptions) => void;
+interface Transaction {
+  id: number;
+  date: Date; // Assuming date is in string format from the API
+  branch: string;
+  type: "full" | "short";
+  amount: number;
+  bank: string;
+  requestedby: string;
+  status: "pending" | "approved" | "rejected";
+  // other fields as needed
+}
+
+interface TransactionTableProps {
+  transactions: Transaction[]; // Ensure transactions prop is defined
+  setTransactions: React.Dispatch<React.SetStateAction<Transaction[] | []>>;
   // other props
 }
 
-interface FilterOptions {
-  fromDate: Date | null;
-  toDate: Date | null;
-  branch: string | null;
-  type: "full" | "short" | null;
-  status: "pending" | "approved" | "rejected" | null;
-}
-
-const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
-  const [filters, setFilters] = useState<FilterOptions>({
-    fromDate: null,
-    toDate: null,
-    branch: null,
-    type: null,
-    status: null,
-  });
-
-  const handleFilterChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = event.target;
-    setFilters({ ...filters, [name]: value });
-  };
-
-  // Invoke parent callback with updated filters
-  React.useEffect(() => {
-    onFilterChange(filters);
-  }, [filters, onFilterChange]);
-
+const FilterBar: React.FC<TransactionTableProps> = ({
+  transactions,
+  setTransactions,
+}) => {
   return (
-    <div>
-      {/* Filter inputs and dropdowns */}
-      {/* Example: Date filter */}
-      <label>
-        From Date:
-        <input type="date" name="fromDate" onChange={handleFilterChange} />
-      </label>
-      <label>
-        To Date:
-        <input type="date" name="toDate" onChange={handleFilterChange} />
-      </label>
-      {/* Other filters */}
+    <div className="filterBar">
+      <p>Total ({transactions.length})</p>
     </div>
   );
 };

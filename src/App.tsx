@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import FilterBar from "./components/FilterBar";
 import TransactionTable from "./components/TransactionTable";
 import TransactionData from "./components/TransactionData";
+import { data } from "./components/data";
 
 interface Transaction {
   id: number;
@@ -19,24 +20,24 @@ const App: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const response = await fetch("https://sheetdb.io/api/v1/46dw1clews27u");
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        const data: Transaction[] = await response.json();
-        setTransactions(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchTransactions = async () => {
+  //     try {
+  //       const response = await fetch("https://sheetdb.io/api/v1/46dw1clews27u");
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch data");
+  //       }
+  //       const data: Transaction[] = await response.json();
+  //       setTransactions(data);
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchTransactions();
-  }, []);
+  //   fetchTransactions();
+  // }, []);
 
   const handleDelete = (id: number) => {
     // Implement delete logic using API or local deletion
@@ -55,9 +56,16 @@ const App: React.FC = () => {
   return (
     <div>
       <h1>Admin Panel</h1>
-      {/* <FilterBar onFilterChange={(filters) => console.log(filters)} /> */}
-      <TransactionTable transactions={transactions} onDelete={handleDelete} />
-      <TransactionData
+      <FilterBar
+        transactions={transactions}
+        setTransactions={setTransactions}
+      />
+      {/* <TransactionData
+        transactions={transactions}
+        setTransactions={setTransactions}
+        onDelete={handleDelete}
+      /> */}
+      <TransactionTable
         transactions={transactions}
         setTransactions={setTransactions}
         onDelete={handleDelete}
